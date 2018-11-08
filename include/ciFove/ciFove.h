@@ -10,4 +10,3 @@
 // ciFove
 #include "FoveOpts.h"
 #include "Context.h"
-#include "interface.h"
