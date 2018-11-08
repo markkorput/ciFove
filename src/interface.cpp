@@ -1,10 +1,12 @@
+#include "IFVRHeadset.h"
 #include "ciFove/interface.h"
 
-using namespace cinder::fove;
+cinder::fove::Context* cinder::fove::createContext(FoveOpts opts) {
+  auto pHeadset = Fove::GetFVRHeadset();
 
-Interface::Interface() : headsetRef(nullptr) {
-}
+  if (CheckError(pHeadset->Initialise(opts.clientCapabilities()), "Initialise")) {
+    // return NULL;
+  }
 
-void Interface::setup() {
-  headsetRef = std::shared_ptr<Fove::IFVRHeadset>(Fove::GetFVRHeadset());
+  return new Context(pHeadset);
 }

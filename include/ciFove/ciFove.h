@@ -8,4 +8,6 @@
 #include "IFVRHeadsetResearch.h"
 
 // ciFove
+#include "FoveOpts.h"
+#include "Context.h"
 #include "interface.h"
