@@ -19,4 +19,12 @@ TEST_CASE("cinder::fove::Context", ""){
 
     REQUIRE(ctx->getHeadset() != nullptr);
   }
+
+  SECTION("render"){
+    auto ctx = fove::Context::create();
+
+    ctx->render([](){
+      // draw scene here, this lambda will be executed twice; once for each eye
+    });
+  }
 }

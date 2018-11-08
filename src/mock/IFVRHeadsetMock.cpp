@@ -1,5 +1,4 @@
 #include "IFVRHeadset.h"
-#include "IFVRCompositor.h"
 #include "ciFove/mock/IFVRHeadsetMock.h"
 // #include <iostream> // std::cout, std::endl
 
@@ -10,10 +9,6 @@ using namespace cinder::fove::mock;
 
 IFVRHeadset* Fove::GetFVRHeadset() {
 	return (IFVRHeadset*) new IFVRHeadsetMock();
-}
-
-IFVRCompositor* Fove::GetFVRCompositor() {
-	return NULL;
 }
 
 EFVR_ErrorCode IFVRHeadsetMock::Initialise(EFVR_ClientCapabilities capabilities){

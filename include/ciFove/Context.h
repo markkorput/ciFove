@@ -1,6 +1,8 @@
 #include <memory>
 #include <iostream>
 
+#include "cinder/gl/gl.h"
+
 #include "FoveTypes.h"
 #include "IFVRHeadset.h"
 #include "IFVRCompositor.h"
@@ -19,15 +21,31 @@ namespace cinder { namespace fove {
       return std::shared_ptr<Context>(create(opts));
     }
 
-  protected: // constructor is protected; use static factory method (above) to create a context instance
+  protected: // constructor is protected; use static factory method (above)
     Context(){}
 
   public:
     inline const std::shared_ptr<Fove::IFVRHeadset> getHeadset() { return headsetRef; }
 
+    void render(std::function<void()> drawFunc);
+
+  protected:
+
+    void submitFrame();
+
+    static inline Fove::EFVR_ErrorCode submitFrame(
+      Fove::IFVRCompositor compositor,
+      GLuint texture,
+      int layerId,
+      const Fove::SFVR_Pose& pose);
+
+    std::shared_ptr<Fove::SFVR_CompositorLayer> createCompositorLayer();
+
   private:
     std::shared_ptr<Fove::IFVRHeadset> headsetRef = nullptr;
     std::shared_ptr<Fove::IFVRCompositor> compositorRef = nullptr;
+    std::shared_ptr<Fove::SFVR_CompositorLayer> compositorLayerRef = nullptr;
+    ci::gl::FboRef fboRef = nullptr;
   };
 
   // Helper function to throw an exception if the passed error code is not None
