@@ -2,6 +2,6 @@
 
 using namespace cinder::fove;
 
-Interface::Interface() : mHmd(0) {
+Interface::Interface() : headsetRef(nullptr) {
 
 }

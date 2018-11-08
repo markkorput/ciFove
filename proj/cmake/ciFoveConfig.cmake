@@ -4,11 +4,14 @@ if( NOT TARGET ciFove )
 	get_filename_component( ciFove_SOURCE_PATH "${ciFove_PATH}/src" ABSOLUTE )
 	get_filename_component( ciFove_INCLUDE_PATH "${ciFove_PATH}/include" ABSOLUTE )
 
+	get_filename_component( FOVE_SDK_PATH "${ciFove_PATH}/lib/FoveSdk" ABSOLUTE )
+
 	FILE(GLOB ciFove_SOURCES ${ciFove_SOURCE_PATH}/*.cpp)
 
 	add_library( ciFove ${ciFove_SOURCES} )
 
 	target_include_directories( ciFove PUBLIC "${ciFove_INCLUDE_PATH}" )
+	target_include_directories( ciFove PUBLIC "${FOVE_SDK_PATH}/include" )
 	target_include_directories( ciFove SYSTEM BEFORE PUBLIC "${CINDER_PATH}/include" )
 
 	if( NOT TARGET cinder )
