@@ -1,14 +1,6 @@
 #include "IFVRHeadset.h"
 #include "ciFove/mock/IFVRHeadsetMock.h"
-
-#include <iostream>
-// #include "Util.h"
-// #include <cstdlib>
-// #include <iomanip>
-// #include <iostream>
-// #include <memory>
-// #include <stdexcept>
-// #include <thread>
+// #include <iostream> // std::cout, std::endl
 
 // Use std namespace for convenience
 using namespace std;
@@ -16,11 +8,8 @@ using namespace Fove;
 using namespace cinder::fove::mock;
 
 IFVRHeadset* Fove::GetFVRHeadset() {
-	std::cout << "GetFVRHeadset" << std::endl;
 	return (IFVRHeadset*) new IFVRHeadsetMock();
 }
-
-// Fove::IFVRHeadset::~IFVRHeadset() {}
 
 EFVR_ErrorCode IFVRHeadsetMock::Initialise(EFVR_ClientCapabilities capabilities){
 	return EFVR_ErrorCode::Connect_NotConnected;
