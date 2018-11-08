@@ -6,7 +6,11 @@ if( NOT TARGET ciFove )
 
 	get_filename_component( FOVE_SDK_PATH "${ciFove_PATH}/lib/FoveSdk" ABSOLUTE )
 
-	FILE(GLOB ciFove_SOURCES ${ciFove_SOURCE_PATH}/*.cpp)
+	if(WIN32)
+		FILE(GLOB ciFove_SOURCES ${ciFove_SOURCE_PATH}/*.cpp)
+	else(WIN32)
+		FILE(GLOB ciFove_SOURCES ${ciFove_SOURCE_PATH}/*.cpp ${ciFove_SOURCE_PATH}/mock/*.cpp)
+	endif(WIN32)
 
 	add_library( ciFove ${ciFove_SOURCES} )
 

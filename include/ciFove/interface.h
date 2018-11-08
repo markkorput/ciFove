@@ -4,14 +4,14 @@
 
 namespace cinder { namespace fove {
   class Interface {
+
   public:
     Interface();
+    void setup();
 
-    const Fove::IFVRHeadset* getHeadset() {
-      return headsetRef.get();
-    }
+    const std::shared_ptr<Fove::IFVRHeadset> getHeadset() { return headsetRef; }
 
   private:
-    const std::unique_ptr<Fove::IFVRHeadset> headsetRef;
+    std::shared_ptr<Fove::IFVRHeadset> headsetRef;
   };
 }}
