@@ -11,6 +11,9 @@
 
 namespace cinder { namespace fove {
 
+  class Context;
+  typedef std::shared_ptr<Context> ContextRef;
+
   class Context {
 
   public: // static factory methods
