@@ -25,5 +25,5 @@ if( NOT TARGET ciFove )
 		        "$ENV{CINDER_PATH}/${CINDER_LIB_DIRECTORY}" )
 	endif()
 
-	target_link_libraries( ciFove PRIVATE cinder )
+	target_link_libraries( ciFove PRIVATE "${FOVE_SDK_PATH}/lib/FoveClient.lib" )
 endif()
