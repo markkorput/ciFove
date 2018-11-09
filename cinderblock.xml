@@ -1,0 +1,9 @@
+<cinder>
+  <block name="ciFove">
+    <!-- TODO: add all source/include etc. information that's currently only in the cmake config -->
+    <platform os="msw">
+      <!-- TODO: add cmake instruction to copy this DLL into executable folder POST BUILD -->
+      <dynamicLibrary>lib/FoveSdk/bin/FoveClient.dll</dynamicLibrary>
+    </platform>
+  </block>
+</cinder>
