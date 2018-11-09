@@ -11,9 +11,10 @@ namespace cinder { namespace fove {
     if (code == Fove::EFVR_ErrorCode::None) return false;
     // throw std::runtime_error("Unable to get " + std::string(data) + ": " + std::to_string(static_cast<int>(code)));
     std::cerr
-      << "[ciFove] Unable to get " << data
-      << ": " << static_cast<int>(code)
+      << "[ciFove] \"" << data << "\" returned ErrorCode: "
+      << static_cast<int>(code)
       << std::endl;
+
     return true;
   }
 

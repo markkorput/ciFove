@@ -18,6 +18,8 @@ namespace cinder { namespace fove {
         return *this;
       }
 
+      // TODO add SFVR_CompositorLayerCreateInfo options
+
     private:
       Fove::EFVR_ClientCapabilities clientCapabs = Fove::EFVR_ClientCapabilities::Orientation | Fove::EFVR_ClientCapabilities::Position | Fove::EFVR_ClientCapabilities::Gaze;
   };
