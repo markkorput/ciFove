@@ -4,6 +4,8 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Fbo.h"
 
+#include "ciFove/ciFove.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -22,6 +24,8 @@ class MainApp : public App {
 	gl::FboRef			mFbo;
 	mat4				mRotation;
 	static const int	FBO_WIDTH = 1024, FBO_HEIGHT = 1024;
+
+  fove::ContextRef ctxRef;
 };
 
 void MainApp::setup()
@@ -32,6 +36,11 @@ void MainApp::setup()
 
 	gl::enableDepthRead();
 	gl::enableDepthWrite();
+
+  ctxRef = fove::Context::createRef(
+    fove::FoveOpts()
+    .clientCapabilities(Fove::EFVR_ClientCapabilities::Orientation) // | Fove::EFVR_ClientCapabilities::Position)
+  );
 }
 
 // Render the color cube into the FBO
@@ -97,6 +106,8 @@ void MainApp::draw()
 	gl::draw( mFbo->getColorTexture(), Rectf( 0, 0, 128, 128 ) );
 	// and draw the depth texture adjacent
 	gl::draw( mFbo->getDepthTexture(), Rectf( 128, 0, 256, 128 ) );
+
+	ctxRef->submitFrameMono(mFbo->getId());
 }
 
 CINDER_APP( MainApp, RendererGl )
