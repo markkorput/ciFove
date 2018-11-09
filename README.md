@@ -2,9 +2,9 @@
 [Cinder](https://libcinder.org/) block (plugin) for the [Fove VR Headset](https://www.getfove.com/)
 
 ## Installation
-This repository contains cinder block, see the [official cinder documentation](https://libcinder.org/docs/guides/cinder-blocks/index.html) on how to work with Cinder blocks.
+This repository contains a Cinder block, see the [official cinder documentation](https://libcinder.org/docs/guides/cinder-blocks/index.html) for information on how to work with Cinder blocks.
 
-The Fove SDK is included in the the repository, but (at the moment of writing) only supports the Windows platform. The ciFove block is written in a way that allows you to compile and run you Cinder application on other platforms as well, replacing the Fove SDK implementation with a function-less mock implementation.
+The Fove SDK is included in the repository but (at the moment of writing) only supports the Windows platform. The ciFove block is written in a way that allows you to compile and run you Cinder application on other platforms as well, replacing the Fove SDK implementation with a function-less mock implementation.
 
 
 ## Building your Cinder application with ciFove
