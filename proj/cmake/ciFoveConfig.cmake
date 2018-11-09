@@ -8,7 +8,6 @@ if( NOT TARGET ciFove )
 
 	if(WIN32)
 		FILE(GLOB ciFove_SOURCES ${ciFove_SOURCE_PATH}/*.cpp)
-			target_link_libraries( ciFove PRIVATE "${FOVE_SDK_PATH}/lib/FoveClient.lib" )
 	else(WIN32)
 		FILE(GLOB ciFove_SOURCES ${ciFove_SOURCE_PATH}/*.cpp ${ciFove_SOURCE_PATH}/mock/*.cpp)
 	endif(WIN32)
@@ -27,4 +26,8 @@ if( NOT TARGET ciFove )
 	endif()
 
 	target_link_libraries( ciFove PRIVATE cinder )
+
+	if(WIN32)
+			target_link_libraries( ciFove PRIVATE "${FOVE_SDK_PATH}/lib/FoveClient.lib" )
+	endif(WIN32)
 endif()
