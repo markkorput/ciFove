@@ -51,15 +51,14 @@ namespace cinder { namespace fove {
     inline void submitFrameStereoTopBottom(ci::gl::Fbo& fbo) { this->submitFrameStereoTopBottom(fbo.getId()); }
     void submitFrameStereoTopBottom(GLuint texId);
 
-    /// This method can be used to render a mono 3d scene
-    /// it will run the drawFunc once.
+    /// This method can be used to render a mono scene, it will run the drawFunc once.
     /// Afterwards, the caller is responsible for sending the final render results
     /// to the hmd (for eexample using the submitFrameMono method)
     void renderMono(std::function<void(Fove::SFVR_Pose&)> drawFunc);
 
-    /// This method can be used to render a mono 3d scene. The returned value
-    /// should be the texture ID and will be used to immediately submit the
-    /// rendered results to the HMD
+    /// This method can be used to render a mono scene, it will run the drawFunc once,
+    /// and the returned value should be the texture ID of the framebuffer containning
+    /// the render results, which be used to immediately submit the frame to the HMD
     void renderMono(std::function<GLuint(Fove::SFVR_Pose&)> drawFunc);
 
     /// This method can be used to render a stereoscopic 3d scene;
@@ -106,7 +105,6 @@ namespace cinder { namespace fove {
     std::shared_ptr<Fove::IFVRHeadset> headsetRef = nullptr;
     std::shared_ptr<Fove::IFVRCompositor> compositorRef = nullptr;
     std::shared_ptr<Fove::SFVR_CompositorLayer> compositorLayerRef = nullptr;
-    ci::gl::FboRef fboRef = nullptr;
 
     const Fove::SFVR_TextureBounds boundsMono[2] = {
       Fove::SFVR_TextureBounds{ 0,0,1,1 },
