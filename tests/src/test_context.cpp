@@ -23,8 +23,17 @@ TEST_CASE("cinder::fove::Context", ""){
   SECTION("render"){
     auto ctx = fove::Context::create();
 
-    ctx->render([](){
-      // draw scene here, this lambda will be executed twice; once for each eye
+    ctx->renderStereo([](){
+      // draw scene here
+      // this lambda will be executed twice; once for each eye
     });
+  }
+
+  SECTION("getEyeResolution") {
+    auto ctx = fove::Context::create();
+    // REQUIRE(ctx->getEyeResolution() == ci::ivec2(0,0));
+
+    // just checking it doesn't throw any errors
+    ctx->getEyeResolution();
   }
 }

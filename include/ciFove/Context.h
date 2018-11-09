@@ -1,5 +1,4 @@
 #include <memory>
-#include <iostream>
 
 #include "cinder/gl/gl.h"
 
@@ -8,6 +7,7 @@
 #include "IFVRCompositor.h"
 
 #include "FoveOpts.h"
+#include "utils.h"
 
 namespace cinder { namespace fove {
 
@@ -27,19 +27,38 @@ namespace cinder { namespace fove {
   public:
     inline const std::shared_ptr<Fove::IFVRHeadset> getHeadset() { return headsetRef; }
 
-    void render(std::function<void()> drawFunc);
+    inline ci::ivec2 getEyeResolution() const {
+      // get layer
+      auto layerRef = this->compositorLayerRef
+        ? this->compositorLayerRef
+        : (this->compositorRef ? createCompositorLayerRef(*compositorRef) : nullptr);
 
-  protected:
+      // get res
+      auto res = layerRef ? layerRef->idealResolutionPerEye : Fove::SFVR_Vec2i(0,0);
+      // convert
+      return ci::ivec2(res.x, res.y);
+    }
 
-    void submitFrame();
+    /// Draw the given texture to both eyes
+    void renderMono(ci::gl::Fbo& fbo);
 
-    static inline Fove::EFVR_ErrorCode submitFrame(
+    void renderStereo(std::function<void()> drawFunc);
+
+  protected: // static Fove-interfacing methods
+
+    static inline Fove::EFVR_ErrorCode submitFrameStereoLeftRight(
       Fove::IFVRCompositor compositor,
       GLuint texture,
       int layerId,
       const Fove::SFVR_Pose& pose);
 
-    std::shared_ptr<Fove::SFVR_CompositorLayer> createCompositorLayer();
+    static inline Fove::EFVR_ErrorCode submitFrameMono(
+      Fove::IFVRCompositor& compositor,
+      GLuint texture,
+      int layerId,
+      const Fove::SFVR_Pose& pose);
+
+    static std::shared_ptr<Fove::SFVR_CompositorLayer> createCompositorLayerRef(Fove::IFVRCompositor& compositor);
 
   private:
     std::shared_ptr<Fove::IFVRHeadset> headsetRef = nullptr;
@@ -48,25 +67,4 @@ namespace cinder { namespace fove {
     ci::gl::FboRef fboRef = nullptr;
   };
 
-  // Helper function to throw an exception if the passed error code is not None
-  inline bool CheckError(const Fove::EFVR_ErrorCode code, const char* const data)
-  {
-    if (code == Fove::EFVR_ErrorCode::None) return false;
-    // throw std::runtime_error("Unable to get " + std::string(data) + ": " + std::to_string(static_cast<int>(code)));
-    std::cerr
-      << "[ciFove] Unable to get " << data
-      << ": " << static_cast<int>(code)
-      << std::endl;
-    return true;
-  }
-
-  // // Helper function, which will throw if the result of a Fove call returns error
-  // // Use like this: const auto MyObject = CheckError(Fove->GetSomeObject(...));
-  // // This works on any function that returns an error via a .error field in the return object
-  // template <typename Type>
-  // Type&& CheckError(Type&& object, const char* const data)
-  // {
-  // 	CheckError(object.error, data);
-  // 	return std::move(object);
-  // }
 }}

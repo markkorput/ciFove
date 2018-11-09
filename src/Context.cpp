@@ -29,9 +29,9 @@ cinder::fove::Context* Context::create(FoveOpts opts) {
   return ctx;
 }
 
-void Context::render(std::function<void()> drawFunc) {
+void Context::renderStereo(std::function<void()> drawFunc) {
   if (!compositorRef) return;
-  if (!compositorLayerRef) compositorLayerRef = createCompositorLayer();
+  if (!compositorLayerRef) compositorLayerRef = createCompositorLayerRef(*compositorRef);
   if (!compositorLayerRef) return;
   // TODO; fbo
 
@@ -44,7 +44,9 @@ void Context::render(std::function<void()> drawFunc) {
   if (CheckError(compositorRef->WaitForRenderPose(&pose), "WaitForRenderPose")) {
     // If there was an error waiting, it's possible that WaitForRenderPose returned immediately
     // Sleep a little bit to prevent us from rendering at maximum framerate and eating massive resources/battery
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    //std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    return;
   }
 
   // LEFT
@@ -55,27 +57,41 @@ void Context::render(std::function<void()> drawFunc) {
   // TODO: set viewport, set eye camera
   drawFunc();
 
-  // Context::submitFrame(*this->compositorRef,
+  // Context::submitFrameStereoLeftRight(*this->compositorRef,
   //   fboRef->getId(),
   //   this->compositorLayerRef->layerId,
   //   pose);
 }
 
-void Context::submitFrame() {
+/// Draw the given texture to both eyes
+void Context::renderMono(ci::gl::Fbo& fbo) {
   if (!this->compositorRef) return;
+  if (!compositorLayerRef) compositorLayerRef = createCompositorLayerRef(*this->compositorRef);
+  if (!compositorLayerRef) return;
 
-  // Context::submitFrame(*this->compositorRef,
-  //   // tex
-  //   // layerId
-  //   // SFVR_Pose
-  // );
+  // Wait for the compositor to tell us to render
+  // This allows the compositor to limit our frame rate to what's appropriate for the HMD display
+  // We move directly on to rendering after this, the update phase happens before hand
+  // This is to ensure the quickest possible turnaround time from being signaled to presenting a frame,
+  // such that we reduce the risk of missing a frame due to time spent during update
+  Fove::SFVR_Pose pose;
+  if (CheckError(compositorRef->WaitForRenderPose(&pose), "WaitForRenderPose")) {
+    // If there was an error waiting, it's possible that WaitForRenderPose returned immediately
+    // Sleep a little bit to prevent us from rendering at maximum framerate and eating massive resources/battery
+
+    //std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    return;
+  }
+
+  Context::submitFrameMono(
+    *this->compositorRef,
+    fbo.getId(),
+    this->compositorLayerRef->layerId,
+    pose
+  );
 }
 
-Fove::EFVR_ErrorCode Context::submitFrame(
-  Fove::IFVRCompositor compositor,
-  GLuint texture,
-  int layerId,
-  const Fove::SFVR_Pose& pose) {
+Fove::EFVR_ErrorCode Context::submitFrameStereoLeftRight(Fove::IFVRCompositor compositor, GLuint texture, int layerId, const Fove::SFVR_Pose& pose) {
   const Fove::SFVR_GLTexture tex{ texture };
 
   Fove::SFVR_CompositorLayerSubmitInfo submitInfo;
@@ -98,6 +114,35 @@ Fove::EFVR_ErrorCode Context::submitFrame(
   return compositor.Submit(submitInfo);
 }
 
-std::shared_ptr<Fove::SFVR_CompositorLayer> Context::createCompositorLayer() {
-  return nullptr; //TODO
+Fove::EFVR_ErrorCode Context::submitFrameMono(Fove::IFVRCompositor& compositor, GLuint texture, int layerId, const Fove::SFVR_Pose& pose) {
+  const Fove::SFVR_GLTexture tex{ texture };
+
+  Fove::SFVR_CompositorLayerSubmitInfo submitInfo;
+  submitInfo.layerId = layerId;
+  submitInfo.pose = pose;
+  submitInfo.left.texInfo = &tex;
+  submitInfo.right.texInfo = &tex;
+
+  Fove::SFVR_TextureBounds bounds;
+  bounds.top = 0;
+  bounds.bottom = 1;
+  bounds.left = 0;
+  bounds.right = 1;
+  submitInfo.left.bounds = bounds;
+  bounds.left = 0;
+  bounds.right = 1;
+  submitInfo.right.bounds = bounds;
+
+  // Error ignored, just continue rendering to the window when we're disconnected
+  return compositor.Submit(submitInfo);
+}
+
+std::shared_ptr<Fove::SFVR_CompositorLayer> Context::createCompositorLayerRef(Fove::IFVRCompositor& compositor) {
+  auto layerRef = std::make_shared<Fove::SFVR_CompositorLayer>();
+
+  if (CheckError(compositor.CreateLayer(Fove::SFVR_CompositorLayerCreateInfo(), layerRef.get()), "CreateLayer")) {
+    return nullptr;
+  }
+
+  return layerRef;
 }
