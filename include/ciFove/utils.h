@@ -5,6 +5,19 @@
 
 namespace cinder { namespace fove {
 
+	// Helper function to throw an exception if the passed error code is not None
+	inline bool CheckError(const Fove::EFVR_ErrorCode code)
+	{
+		if (code == Fove::EFVR_ErrorCode::None) return false;
+		// throw std::runtime_error("Unable to get " + std::string(data) + ": " + std::to_string(static_cast<int>(code)));
+		std::cerr
+			<< "[ciFove] got ErrorCode: "
+			<< static_cast<int>(code)
+			<< std::endl;
+
+		return true;
+	}
+
   // Helper function to throw an exception if the passed error code is not None
   inline bool CheckError(const Fove::EFVR_ErrorCode code, const char* const data)
   {

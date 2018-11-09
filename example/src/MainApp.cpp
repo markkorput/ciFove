@@ -3,6 +3,7 @@
 #include "cinder/Camera.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Fbo.h"
+#include "cinder/Log.h"
 
 #include "ciFove/ciFove.h"
 
@@ -26,6 +27,7 @@ class MainApp : public App {
 	static const int	FBO_WIDTH = 1024, FBO_HEIGHT = 1024;
 
   fove::ContextRef ctxRef;
+  Fove::SFVR_GazeVector leftGaze, rightGaze;
 };
 
 void MainApp::setup()
@@ -79,6 +81,11 @@ void MainApp::update()
 
 	// render into our FBO
 	renderSceneToFbo();
+
+	if (fove::CheckError(ctxRef->getHeadset()->GetGazeVectors(&this->leftGaze, &this->rightGaze))) {
+		CI_LOG_W("Error while fetching gaze vectors from Fove");
+		// the gaze vectrors are normalized vectors (length of 1.0f)
+	}
 }
 
 void MainApp::draw()
